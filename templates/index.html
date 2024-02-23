@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Terminal</title>
+    <style>
+        *{
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        main{
+            background-color: beige;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .sec_2{
+            margin: 2%;
+            display: flex;
+            gap: 2%;
+        }
+        .but_pre{
+            font-size:15px;
+            font-family:Arial;
+            width:140px;
+            height:50px;
+            border-width:1px;
+            color:#fff;
+            border-color:#314179;
+            font-weight:bold;
+            border-top-left-radius:0px;
+            border-top-right-radius:0px;
+            border-bottom-left-radius:0px;
+            border-bottom-right-radius:0px;
+            box-shadow:inset 0px 1px 0px 0px #7a8eb9;
+            background:linear-gradient(#637aad, #5972a7);
+        }
+        .but_pre:hover {
+             background: linear-gradient(#5972a7, #637aad);
+        }
+        .but_run {
+            margin-bottom: 2vh;
+            font-size:15px;
+            font-family:Arial;
+            width:140px;
+            height:50px;
+            border-width:1px;
+            color:#ffffff;
+            border-color:#74b807;
+            font-weight:bold;
+            border-top-left-radius:6px;
+            border-top-right-radius:6px;
+            border-bottom-left-radius:6px;
+            border-bottom-right-radius:6px;
+            box-shadow:inset 0px 1px 0px 0px #a4e271;
+            text-shadow:inset 0px 1px 0px #528009;
+            background:linear-gradient(#89c403, #77a809);
+            }
+
+        .but_run:hover {
+             background: linear-gradient(#77a809, #89c403);
+        }
+        .input_run {
+            margin-bottom: 2vh;
+            padding: 5px;
+            font-size: 16px;
+            border-width: 1px;
+            border-color: #CCCCCC;
+            background-color: #FFFFFF;
+            color: #000000;
+            border-style: solid;
+            border-radius: 0px;
+            box-shadow: 0px 0px 5px rgba(66,66,66,.75);
+        }
+        .input_run:focus {
+            outline:none;
+        }
+        .sec_run{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+        }
+    </style>
+</head>
+<body>
+    <main>
+    <h1>Web Terminal</h1>
+    <h2>Predefined Commands:</h2>
+    <div class="sec_2">
+    <button class="but_pre" type="button" onclick="setCommand('dir')">List Files</button>
+    <button class="but_pre" type="button" onclick="setCommand('whoami')">Who Am I?</button>
+	<button class="but_pre" type="button" onclick="setCommand('net user')">Show all users</button>
+    <button class="but_pre" type="button" onclick="setCommand('ipconfig /all')">Ethernet Configuration</button>
+    </div>
+    <div class="sec_run">
+    <input class="input_run" type="text" id="command" placeholder="Enter your command">
+    <button class="but_run" onclick="runCommand()">Run Command</button>
+    </div>	
+<textarea id="output" rows="20" cols="80" readonly></textarea>
+</main>
+    <script>
+	function setCommand(command) {
+            document.getElementById('command').value = command;
+        }
+        function runCommand() {
+            const command = document.getElementById('command').value;
+            const xhr = new XMLHttpRequest();
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        document.getElementById('output').value = xhr.responseText;
+                    } else {
+                        document.getElementById('output').value = `Error: ${xhr.responseText}`;
+                    }
+                }
+            };
+
+            xhr.open('POST', '/run_command', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send(`command=${encodeURIComponent(command)}`);
+        }
+    </script>
+</body>
+</html>
